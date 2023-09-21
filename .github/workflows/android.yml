@@ -57,6 +57,14 @@ jobs:
       env:
         ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
 
+    - name: Build blemesh-android
+      run: |
+        git clone https://codeberg.org/aakselrod/blemesh-android
+        cd blemesh-android
+        chmod +x gradlew
+        ./gradlew build assemble
+        cp lib/build/outputs/aar/lib-release.aar ../app/libs/blemesh.aar
+
     - name: Gradle build  
       if: github.event_name != 'release' && github.ref_name != 'main'
       run: |

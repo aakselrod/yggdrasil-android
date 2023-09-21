@@ -10,6 +10,8 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 
 const val PREF_KEY_ENABLED = "enabled"
+const val BLE_ENABLED = "ble"
+const val CODED_PHY_ENABLED = "codedPhy"
 const val MAIN_CHANNEL_ID = "Yggdrasil Service"
 
 class GlobalApplication: Application(), YggStateReceiver.StateReceiver {

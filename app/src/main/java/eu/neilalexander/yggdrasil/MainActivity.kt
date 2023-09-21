@@ -78,6 +78,48 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun checkBLEPermissions() {
+        val preferences = PreferenceManager.getDefaultSharedPreferences(this.baseContext)
+        val bleEnabled = preferences.getBoolean(BLE_ENABLED, (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S))
+        if (!bleEnabled) {
+            return
+        }
+
+        PermissionX.init(this)
+            .permissions(
+                Manifest.permission.POST_NOTIFICATIONS,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.BLUETOOTH_ADVERTISE,
+                Manifest.permission.BLUETOOTH_CONNECT,
+                Manifest.permission.BLUETOOTH_SCAN,
+            )
+            .onExplainRequestReason { scope, deniedList ->
+                scope.showRequestReasonDialog(
+                    deniedList,
+                    getString(R.string.explain_perms),
+                    getString(R.string.ok),
+                    getString(R.string.cancel),
+                )
+            }
+            .onForwardToSettings { scope, deniedList ->
+                scope.showForwardToSettingsDialog(
+                    deniedList,
+                    getString(R.string.manual_perms),
+                    getString(R.string.ok),
+                    getString(R.string.cancel),
+                )
+            }
+            .request { allGranted, _, _ ->
+                if (!allGranted) {
+                    preferences.edit().apply {
+	                putBoolean(BLE_ENABLED, false)
+	                commit()
+	            }
+                }
+            }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -101,6 +143,7 @@ class MainActivity : AppCompatActivity() {
             when (isChecked) {
                 true -> {
                     checkNotificationPermission()
+                    checkBLEPermissions()
                     val vpnIntent = VpnService.prepare(this)
                     if (vpnIntent != null) {
                         startVpnActivity.launch(vpnIntent)

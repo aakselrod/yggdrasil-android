@@ -14,12 +14,21 @@ cd /tmp/yggdrasil-go
 ./contrib/mobile/build -a
 ```
 
+* build blemesh-android:
+
+```
+git clone https://codeberg.org/aakselrod/blemesh-android /tmp/blemesh-android
+cd /tmp/blemesh-android
+./gradlew build assemble
+```
+
 * clone yggdrasil for android and copy over the built go library
 
 ```
 git clone https://github.com/yggdrasil-network/yggdrasil-android /tmp/yggdrasil-android
 mkdir /tmp/yggdrasil-android/app/libs
 cp /tmp/yggdrasil-go/yggdrasil.aar /tmp/yggdrasil-android/app/libs/
+cp /tmp/blemesh-android/lib/build/outputs/aar/lib-release.aar /tmp/yggdrasil-android/app/libs/blemesh.aar
 ```
 
 * build yggdrasil-android
